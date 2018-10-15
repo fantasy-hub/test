@@ -1,0 +1,272 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+    <style>
+        ul, li {
+            list-style: none;
+        }
+        html,body,p,h1,h2,h3,ul,li {
+            margin: 0;
+            padding: 0;
+            font-size: 16px;
+        }
+
+        .sector {
+            position: fixed;
+            /* bottom: 200px;
+            left: 200px; */
+            bottom: 3.5em;
+            left: 3.5em;
+            z-index: 0;
+            width: 300px;
+            height: 300px;
+            transition: all .3s;
+        }
+        
+        .sector__list {
+            position: absolute;
+            bottom: 50%;
+            right: 50%;
+            width: 85px;
+            height: 95px;
+            transform-origin: 100% 100%;
+            overflow: hidden;
+        }
+        .list-form {
+            position: absolute;
+            bottom: -50%;
+            right: -50%;
+            width: 100px;
+            height: 100px;
+            border-radius: 50%;
+            text-decoration: none;
+            transform: skew(-60deg) rotate(-60deg);
+        } 
+
+
+        .sector__1 {
+            transform: rotate(30deg) skew(60deg);
+        }
+        .sector__1-form {
+            background-color: red;
+        }
+        .sector__2 {
+            transform: rotate(60deg) skew(60deg);
+        }
+        .sector__2-form {
+            background-color: orange;
+        }
+        .sector__3 {
+            transform: rotate(90deg) skew(60deg);
+        }
+        .sector__3-form {
+            background-color: yellow;
+        }
+        .sector__4 {
+            transform: rotate(120deg) skew(60deg);
+        }
+        .sector__4-form {
+            background-color: green;
+        }
+        .sector__5 {
+            transform: rotate(150deg) skew(60deg);
+        }
+        .sector__5-form {
+            background-color: aqua;
+        }
+        .sector__6 {
+            transform: rotate(180deg) skew(60deg);
+        }
+        .sector__6-form {
+            background-color: blue;
+        }
+        .sector__7 {
+            transform: rotate(210deg) skew(60deg);
+        }
+        .sector__7-form {
+            background-color: blueviolet;
+        }
+        .sector__9 {
+            transform: rotate(240deg) skew(60deg);
+        }
+        .sector__9-form {
+            background-color: black;
+        }
+    </style>
+</head> 
+<body>
+    <!-- 
+        实际展示2到8,
+        1用于占位
+     -->
+    <ul class="sector" style="transform: rotate(0deg)">
+        <li class="sector__1 sector__list" type="1">1
+            <div class="sector__1-form list-form"></div>
+        </li>
+        <li class="sector__2 sector__list" type="2">2
+            <div class="sector__2-form list-form"></div>
+        </li>
+        <li class="sector__3 sector__list" type="3">3
+            <div class="sector__3-form list-form"></div>
+        </li>
+        <li class="sector__4 sector__list" type="4">4
+            <div class="sector__4-form list-form"></div>
+        </li>
+        <li class="sector__5 sector__list" type="5">5
+            <div class="sector__5-form list-form"></div>
+        </li>
+        <li class="sector__6 sector__list" type="6">6
+            <div class="sector__6-form list-form"></div>
+        </li>
+        <li class="sector__7 sector__list" type="7">7
+            <div class="sector__7-form list-form"></div>
+        </li>
+    </ul>
+
+
+    <script src="https://lib.baomitu.com/jquery/3.3.1/jquery.min.js"></script>
+    <script>
+        var $dom = $(document),
+            x1, x2, y1, y2, isMove, directionX, directionY;
+
+        // 初始数组：数组3
+        var sectorCt = document.getElementsByClassName('sector')[0];
+        var sectorList = sectorCt.children;
+        var sectorArr = Array.prototype.slice.call(sectorList);
+        // console.log(sectorArr);
+
+        /*
+        var arr = [1,2,3,4,5,6,7];
+
+        // 顺时针方法
+        var temp = arr.splice(arr.length-n, n);
+        temp.reverse();
+        temp.forEach(function(item) {
+            arr.unshift(item);
+        });
+
+        // 逆时针方法
+        var temp = arr.splice(0, n);
+        temp.forEach(function (item) {
+            arr.push(item);
+        });
+        */
+
+        // 洗牌：接收一个参数arg，用于判断与当前选定角度的attr的差值，调整dom的排列
+        function resetCaro(num) {
+            
+        }
+
+
+        /**
+         * @param 判断滑动方向；判断滑动距离；执行转一格或转两格
+        */
+        function caro() {
+            $('.sector').on('touchstart touchmove touchend', function (e) {
+                var touch = e.originalEvent.targetTouches[0];
+                if (e.type == 'touchstart') {
+                    x1 = touch.pageX;
+                    y1 = touch.pageY;
+                }
+                else if (e.type == 'touchmove') {
+                    x2 = touch.pageX;
+                    y2 = touch.pageY;
+                    isMove = true;
+                }
+                else if (e.type == 'touchend') {
+                    directionX = Math.abs(x2 - x1),
+                    directionY = y2 - y1;
+
+                    // 向上滑动
+                    if (directionX < 140 && directionY < -70 && isMove) {
+                        if (directionY < -140) {
+                            playPre(2);
+                        } else {
+                            playPre(1);
+                        }
+                        isMove = false;
+                    }
+
+                    // 向下滑动
+                    else if (directionX < 140 && directionY > 70 && isMove) {
+                        if (directionY > 140) {
+                            playNext(2);
+                        } else {
+                            playNext(1);
+                        }
+                        isMove = false;
+                    }
+                }
+            });
+        }
+
+        // 逆时针
+        function playPre(num) {
+            var $sector = $('.sector');
+            // 匹配角度
+            // 注意：因为html节点定义的初始转角是0，所以第一次转动不管转30还是60，返回的都是0
+            // 因为不能根据转角判断，所以只能根据参数num判断当前位置
+            let strRaw = +$sector[0].style.transform.match(/[-]{0,1}[\d]*[\.]{0,1}[\d]+/g)[0];
+            // console.log(strRaw)
+            $sector.css('transform', `rotate(${strRaw - 30 * num}deg)`);
+            
+            // 旋转后修改dom数组
+            
+        }
+
+        // 顺时针
+        function playNext(num) {
+            var $sector = $('.sector');
+            // 匹配角度
+            let strRaw = +$sector[0].style.transform.match(/[-]{0,1}[\d]*[\.]{0,1}[\d]+/g)[0];
+            // console.log(strRaw)
+            $sector.css('transform', `rotate(${strRaw + 30 * num}deg)`);
+
+            // 旋转后修改dom数组
+            var temp = sectorArr.splice(sectorArr.length-num, num);
+            temp.reverse();
+            temp.forEach(function(item) {
+                sectorArr.unshift(item);
+            });
+            console.log(sectorArr);
+        }
+
+
+        $(function () {
+            caro();
+            resetCaro();
+        });
+
+        // 转角函数
+        // function getmatrix(a,b,c,d,e,f){  
+        //     var aa=Math.round(180*Math.asin(a)/ Math.PI);  
+        //     var bb=Math.round(180*Math.acos(b)/ Math.PI);  
+        //     var cc=Math.round(180*Math.asin(c)/ Math.PI);  
+        //     var dd=Math.round(180*Math.acos(d)/ Math.PI);  
+        //     var deg=0;  
+        //     if(aa==bb||-aa==bb){  
+        //         deg=dd;  
+        //     }else if(-aa+bb==180){  
+        //         deg=180+cc;  
+        //     }else if(aa+bb==180){  
+        //         deg=360-cc||360-dd;  
+        //     }  
+        //     return deg>=360?0:deg;  
+        //     //return (aa+','+bb+','+cc+','+dd);  
+        // }
+
+        // function playNext(num) {
+        //     var $sector = $('.sector');
+        //     // 构造getmatrix函数,返回上次旋转度数
+        //     var deg = eval('get' + $sector.css('transform'));
+        //     console.log(deg);
+        //     var step = 30 * num;
+        //     $sector.css({'transform':'rotate('+(deg+step)%360+'deg)'});
+        // }
+    </script>
+</body>
+</html>
