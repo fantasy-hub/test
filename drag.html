@@ -1,0 +1,284 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+    <style>
+        ul, li {
+            list-style: none;
+        }
+        html,body,p,h1,h2,h3,ul,li {
+            margin: 0;
+            padding: 0;
+            font-size: 16px;
+        }
+
+        .sector {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            /* margin-left: -200px;
+            margin-bottom: -200px;  */
+            /* bottom: 3.5em;
+            left: 3.5em; */
+            z-index: 0;
+            width: 400px;
+            height: 400px;
+            /* transition: all .3s; */
+        }
+        
+        .sector_list {
+            position: absolute;
+            bottom: 50%;
+            right: 50%;
+            width: 85px;
+            height: 95px;
+            transform-origin: 100% 100%;
+            overflow: hidden;
+        }
+        .list-form {
+            position: absolute;
+            bottom: -50%;
+            right: -50%;
+            width: 100px;
+            height: 100px;
+            border-radius: 50%;
+            text-decoration: none;
+            transform: skew(-60deg) rotate(-60deg);
+        } 
+
+
+        .pos_1 {
+            transform: rotate(0deg) skew(60deg);
+        }
+        .sector_1 .list-form {
+            background-color: red;
+        }
+        .pos_2 {
+            transform: rotate(30deg) skew(60deg);
+        }
+        .sector_2 .list-form {
+            background-color: orange;
+        }
+        .pos_3 {
+            transform: rotate(60deg) skew(60deg);
+        }
+        .sector_3 .list-form {
+            background-color: yellow;
+        }
+        .pos_4 {
+            transform: rotate(90deg) skew(60deg);
+        }
+        .sector_4 .list-form {
+            background-color: green;
+        }
+        .pos_5 {
+            transform: rotate(120deg) skew(60deg);
+        }
+        .sector_5 .list-form {
+            background-color: aqua;
+        }
+        .pos_6 {
+            transform: rotate(150deg) skew(60deg);
+        }
+        .sector_6 .list-form {
+            background-color: blue;
+        }
+        .pos_7 {
+            transform: rotate(180deg) skew(60deg);
+        }
+        .sector_7 .list-form {
+            background-color: blueviolet;
+        }
+        .pos_8 {
+            transform: rotate(210deg) skew(60deg);
+        }
+        .pos_9 {
+            transform: rotate(240deg) skew(60deg);
+        }
+    </style>
+</head> 
+<body>
+    <!-- 
+        实际展示2到8,
+        1用于占位
+     -->
+    <ul class="sector">
+        <li class="sector_5 pos_1 sector_list" type="5">5
+            <div class="list-form"></div>
+        </li>
+        <li class="sector_6 pos_2 sector_list" type="6">6
+            <div class="list-form"></div>
+        </li>
+        <li class="sector_7 pos_3 sector_list" type="7">7
+            <div class="list-form"></div>
+        </li>
+        <li class="sector_1 pos_4 sector_list" type="1">1
+            <div class="list-form"></div>
+        </li>
+        <li class="sector_2 pos_5 sector_list" type="2">2
+            <div class="list-form"></div>
+        </li>
+        <li class="sector_3 pos_6 sector_list" type="3">3
+            <div class="list-form"></div>
+        </li>
+        <li class="sector_4 pos_7 sector_list" type="4">4
+            <div class="list-form"></div>
+        </li>
+        <li class="sector_5 pos_8 sector_list" type="5">5
+            <div class="list-form"></div>
+        </li>
+        <li class="sector_6 pos_9 sector_list" type="6">6
+            <div class="list-form"></div>
+        </li>
+    </ul>
+
+
+    <script src="https://lib.baomitu.com/jquery/3.3.1/jquery.min.js"></script>
+    <script src="./jquery.rotate.js"></script>
+    <script>
+        var $dom = $(document),
+            x1, x2, y1, y2, isMove, directionX, directionY;
+        var nowDirct = '',
+            nowNum = '',
+            circleY = document.documentElement.clientHeight,
+            circleX = 0,
+            preX,
+            preY,
+            curX,
+            curY,
+            transferAngle,
+            a = 0,
+            curAngle; 
+
+        var rotation = function (num, callback){
+            $(".sector").rotate({
+                angle: 0,
+                animateTo: 30 * num,
+                callback: callback
+            });
+        }
+        // 洗牌：接收一个参数arg，用于判断与当前选定角度的attr的差值，调整dom的排列
+        function resetCaro() {
+            var $sector = $('.sector');
+            var sectorCt = document.getElementsByClassName('sector')[0],
+                sectorList = sectorCt.children,
+                sectorArr = Array.prototype.slice.call(sectorList),
+                temp = [];
+            // 旋转后修改dom数组
+            if(nowDirct === 'pre') {
+                temp = sectorArr.splice(0, nowNum);
+                temp.forEach(function (item) {
+                    sectorArr.push(item);
+                });
+            } else {
+                // 旋转后生成新的顺序
+                temp = sectorArr.splice(sectorArr.length-nowNum, nowNum);
+                temp.reverse();
+                temp.forEach(function(item) {
+                    sectorArr.unshift(item);
+                });
+            }
+            var propsArr = [];
+            for(var i = 0; i < sectorArr.length; i++) {
+                propsArr.push($(sectorArr[i]).attr('type'));
+            }
+
+            $('.sector_list').each(function (i, item) {
+                // 修改文字和颜色
+                $(this).html(propsArr[i] + '<div class="list-form"></div>');
+                // 移除原class
+                $(this).removeClass('sector_' + $(this).attr('type'));
+                // 修改新的type顺序
+                $(this).attr('type', propsArr[i]);
+                $(this).addClass('sector_' + $(this).attr('type'));
+            });
+
+            // 旋转后归零
+            // $sector.css('transform', 'rotate(0deg)');
+            rotation(0, null);
+        }
+
+
+        /**
+         * @param 判断滑动方向；判断滑动距离；执行转一格或转两格
+        */
+        function caro() {
+            $('.sector').on('touchstart touchmove touchend', function (e) {
+                var touch = e.originalEvent.targetTouches[0];
+                if (e.type == 'touchstart') {
+                    preX = touch.pageX;
+				    preY = touch.pageY;
+                    //计算当前点击的点与圆心(150,150)的X轴的夹角(弧度) --> 上半圆为负(0 ~ -180), 下半圆未正[0 ~ 180]
+                    preAngle = Math.atan2(preY - circleY, preX - circleX);
+                
+                }
+                else if (e.type == 'touchmove') {
+                    curX = touch.pageX;
+                    curY = touch.pageY;
+                    //计算当前点击的点与圆心(150,150)的X轴的夹角(弧度) --> 上半圆为负(0 ~ -180), 下半圆未正[0 ~ 180]
+				    curAngle = Math.atan2(curY - circleY, curX - circleX);
+                }
+                else if (e.type == 'touchend') {
+                    transferAngle = curAngle - preAngle;
+					a += (transferAngle * 180 / Math.PI);
+                    console.log(a);
+                    $(this).rotate(a);
+
+                    directionY = curY - preY;
+                    directionX = curX - preX;
+                    console.log(directionX,directionY);
+
+                    // // 向上滑动
+                    // if (directionX < 140 && directionY < -30) {
+
+                    //     if (directionY < -90) {
+                    //         playPre(3);
+                    //     }
+                    //     else if (-90 <= directionY && directionY < -60) {
+                    //         playPre(2);
+                    //     }
+                    //     else if (-60 <= directionY && directionY < -30)
+                    // }
+
+                    // // 向下滑动
+                    // else if (directionX < 140 && directionY > 90) {
+                    //     if (directionY > 140) {
+                    //         playNext(2);
+                    //     } else {
+                    //         playNext(1);
+                    //     }
+                    //     if()
+                    // }
+                }
+            });
+        }
+
+        // 逆时针
+        function playPre(num) {
+            var $sector = $('.sector');
+
+            nowDirct = 'pre';
+            nowNum = num;
+            rotation(-num, resetCaro);
+        }
+
+        // 顺时针
+        function playNext(num) {
+            var $sector = $('.sector');
+
+            nowDirct = 'next';
+            nowNum = num; 
+            rotation(num, resetCaro);
+
+        }
+        
+
+        $(function () {
+            caro();
+        });
+    </script>
+</body>
+</html>

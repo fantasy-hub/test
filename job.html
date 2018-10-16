@@ -27,7 +27,7 @@
             transition: all .3s;
         }
         
-        .sector__list {
+        .sector_list {
             position: absolute;
             bottom: 50%;
             right: 50%;
@@ -48,53 +48,47 @@
         } 
 
 
-        .sector__1 {
+        .pos_1 {
             transform: rotate(30deg) skew(60deg);
         }
-        .sector__1-form {
+        .sector_1 .list-form {
             background-color: red;
         }
-        .sector__2 {
+        .pos_2 {
             transform: rotate(60deg) skew(60deg);
         }
-        .sector__2-form {
+        .sector_2 .list-form {
             background-color: orange;
         }
-        .sector__3 {
+        .pos_3 {
             transform: rotate(90deg) skew(60deg);
         }
-        .sector__3-form {
+        .sector_3 .list-form {
             background-color: yellow;
         }
-        .sector__4 {
+        .pos_4 {
             transform: rotate(120deg) skew(60deg);
         }
-        .sector__4-form {
+        .sector_4 .list-form {
             background-color: green;
         }
-        .sector__5 {
+        .pos_5 {
             transform: rotate(150deg) skew(60deg);
         }
-        .sector__5-form {
+        .sector_5 .list-form {
             background-color: aqua;
         }
-        .sector__6 {
+        .pos_6 {
             transform: rotate(180deg) skew(60deg);
         }
-        .sector__6-form {
+        .sector_6 .list-form {
             background-color: blue;
         }
-        .sector__7 {
+        .pos_7 {
             transform: rotate(210deg) skew(60deg);
         }
-        .sector__7-form {
+        .sector_7 .list-form {
             background-color: blueviolet;
-        }
-        .sector__9 {
-            transform: rotate(240deg) skew(60deg);
-        }
-        .sector__9-form {
-            background-color: black;
         }
     </style>
 </head> 
@@ -104,26 +98,26 @@
         1用于占位
      -->
     <ul class="sector" style="transform: rotate(0deg)">
-        <li class="sector__1 sector__list" type="1">1
-            <div class="sector__1-form list-form"></div>
+        <li class="sector_1 pos_1 sector_list" type="1">1
+            <div class="list-form"></div>
         </li>
-        <li class="sector__2 sector__list" type="2">2
-            <div class="sector__2-form list-form"></div>
+        <li class="sector_2 pos_2 sector_list" type="2">2
+            <div class="list-form"></div>
         </li>
-        <li class="sector__3 sector__list" type="3">3
-            <div class="sector__3-form list-form"></div>
+        <li class="sector_3 pos_3 sector_list" type="3">3
+            <div class="list-form"></div>
         </li>
-        <li class="sector__4 sector__list" type="4">4
-            <div class="sector__4-form list-form"></div>
+        <li class="sector_4 pos_4 sector_list" type="4">4
+            <div class="list-form"></div>
         </li>
-        <li class="sector__5 sector__list" type="5">5
-            <div class="sector__5-form list-form"></div>
+        <li class="sector_5 pos_5 sector_list" type="5">5
+            <div class="list-form"></div>
         </li>
-        <li class="sector__6 sector__list" type="6">6
-            <div class="sector__6-form list-form"></div>
+        <li class="sector_6 pos_6 sector_list" type="6">6
+            <div class="list-form"></div>
         </li>
-        <li class="sector__7 sector__list" type="7">7
-            <div class="sector__7-form list-form"></div>
+        <li class="sector_7 pos_7 sector_list" type="7">7
+            <div class="list-form"></div>
         </li>
     </ul>
 
@@ -157,8 +151,28 @@
         */
 
         // 洗牌：接收一个参数arg，用于判断与当前选定角度的attr的差值，调整dom的排列
-        function resetCaro(num) {
-            
+        function resetCaro() {
+            var $sector = $('.sector');
+            // 用新的数组顺序对原数组的内容赋值：1.利用id标识（type） 2.修改class
+            // 直接操作sectorArr数组会变成 修改同一个引用，所以新建一个数组
+            var propsArr = [];
+            for(var i = 0; i < sectorArr.length; i++) {
+                propsArr.push($(sectorArr[i]).attr('type'));
+            }
+            console.log(propsArr);
+
+            $('.sector_list').each(function (i, item) {
+                // 修改文字和颜色
+                $(this).html(propsArr[i] + '<div class="list-form"></div>');
+                // 移除原class
+                $(this).removeClass('sector_' + $(this).attr('type'));
+                // 修改新的type顺序
+                $(this).attr('type', propsArr[i]);
+                $(this).addClass('sector_' + $(this).attr('type'));
+            });
+
+            // 旋转后归零
+            $sector.css('transform', 'rotate(0deg)');
         }
 
 
@@ -215,26 +229,34 @@
             $sector.css('transform', `rotate(${strRaw - 30 * num}deg)`);
             
             // 旋转后修改dom数组
-            
+            var temp = sectorArr.splice(0, num);
+            temp.forEach(function (item) {
+                sectorArr.push(item);
+            });
         }
 
         // 顺时针
         function playNext(num) {
             var $sector = $('.sector');
             // 匹配角度
-            let strRaw = +$sector[0].style.transform.match(/[-]{0,1}[\d]*[\.]{0,1}[\d]+/g)[0];
+            var strRaw = +$sector[0].style.transform.match(/[-]{0,1}[\d]*[\.]{0,1}[\d]+/g)[0];
             // console.log(strRaw)
             $sector.css('transform', `rotate(${strRaw + 30 * num}deg)`);
 
-            // 旋转后修改dom数组
+            // 旋转后生成新的顺序
             var temp = sectorArr.splice(sectorArr.length-num, num);
             temp.reverse();
             temp.forEach(function(item) {
                 sectorArr.unshift(item);
             });
-            console.log(sectorArr);
+
         }
 
+        document.querySelector('.sector').addEventListener("webkitAnimationEnd", function(){ //动画结束时事件
+        console.log(1)
+            resetCaro();
+        });
+        
 
         $(function () {
             caro();
