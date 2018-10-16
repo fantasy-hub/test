@@ -138,6 +138,9 @@
             <div class="list-form"></div>
         </li>
     </ul>
+
+
+    <script src="./inobounce.min.js"></script>
     <script src="./jquery-3.3.1.js"></script>
     <script src="./jquery.rotate.js"></script>
     <script>
@@ -286,47 +289,9 @@
                             callback: resetCaro
                         });
                     }
-                    // // 向上滑动
-                    // if (directionX < 140 && directionY < -30) {
-
-                    //     if (directionY < -90) {
-                    //         playPre(3);
-                    //     }
-                    //     else if (-90 <= directionY && directionY < -60) {
-                    //         playPre(2);
-                    //     }
-                    //     else if (-60 <= directionY && directionY < -30)
-                    // }
-
-                    // // 向下滑动
-                    // else if (directionX < 140 && directionY > 90) {
-                    //     if (directionY > 140) {
-                    //         playNext(2);
-                    //     } else {
-                    //         playNext(1);
-                    //     }
-                    //     if()
-                    // }
                 }
             });
         }
-
-        // 逆时针
-        // function playPre(num) {
-        //     var $sector = $('.sector');
-        //     nowDirct = 'pre';
-        //     nowNum = num;
-        //     rotation(-num, resetCaro);
-        // }
-
-        // 顺时针
-        // function playNext(num) {
-        //     var $sector = $('.sector');
-        //     nowDirct = 'next';
-        //     nowNum = num; 
-        //     rotation(num, resetCaro);
-        // }
-        
 
         $(function () {
             caro();
