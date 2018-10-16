@@ -146,8 +146,6 @@
     <script src="./jquery-3.3.1.js"></script>
     <script src="./jquery.rotate.js"></script>
     <script>
-        var $dom = $(document),
-            x1, x2, y1, y2, isMove, directionX, directionY;
         var nowDirct = '',
             nowNum = '',
             circleY = document.documentElement.clientHeight, // 圆心Y
@@ -161,7 +159,7 @@
             curAngle, // 移动弧度
             angle = 0, // 角度
             diffAngle = 0, // 差异角
-            finalAngle = 0;
+            finalAngle = 0;  // 旋转整角
 
         // var rotation = function (angle, callback){
         //     $('.sector').rotate({
@@ -271,7 +269,7 @@
                     if(_absAngle > 30) {
                         diffAngle = angle % 30;
                     } else if(_absAngle > 15) {
-                        diffAngle = angle > 0 ? angle - 30 : angle + 30;
+                        diffAngle = angle > 0 ? angle - 30 : angle + 30; // 补角计算（枚举）
                     } else {
                         diffAngle = angle;
                     }
@@ -279,6 +277,7 @@
                     if(Math.abs(diffAngle) < 15) {
                         finalAngle = angle - diffAngle;
                         $(this).rotate({
+                            duration: 250,
                             angle: angle,
                             animateTo: angle - diffAngle,
                             callback: resetCaro // 转动完成后dom重排
