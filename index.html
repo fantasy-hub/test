@@ -19,13 +19,13 @@
             position: fixed;
             bottom: 0;
             left: 0;
-            /* margin-left: -200px;
-            margin-bottom: -200px;  */
+            margin-bottom: -62px;
+            margin-left: -61px;
             /* bottom: 3.5em;
             left: 3.5em; */
             z-index: 0;
-            width: 400px;
-            height: 400px;
+            width: 122px;
+            height: 122px;
             /* transition: all .3s; */
         }
         
@@ -101,10 +101,6 @@
     </style>
 </head> 
 <body>
-    <!-- 
-        实际展示2到8,
-        1用于占位
-     -->
     <ul class="sector">
         <li class="sector_5 pos_1 sector_list" type="5">5
             <div class="list-form"></div>
@@ -134,71 +130,96 @@
             <div class="list-form"></div>
         </li>
     </ul>
-
-
-    <script src="https://lib.baomitu.com/jquery/3.3.1/jquery.min.js"></script>
-    <script src="./jquery.rotate.js"></script>
+    <script src="./jquery-3.3.1.js"></script>
+    <script src="./jQuery.rotate.js"></script>
     <script>
         var $dom = $(document),
             x1, x2, y1, y2, isMove, directionX, directionY;
         var nowDirct = '',
             nowNum = '',
-            circleY = document.documentElement.clientHeight,
-            circleX = 0,
-            preX,
-            preY,
-            curX,
-            curY,
-            transferAngle,
-            a = 0,
-            curAngle; 
+            circleY = document.documentElement.clientHeight, // 圆心Y
+            circleX = 0, // 圆心X
+            preX, // 起始点X
+            preY, // 起始点Y
+            curX, // 移动点X
+            curY, // 移动点Y
+            transferAngle, // 弧度差值
+            preAngle, // 初始弧度
+            curAngle, // 移动弧度
+            angle = 0, // 角度
+            diffAngle = 0, // 差异角
+            finalAngle = 0;
 
-        var rotation = function (num, callback){
-            $(".sector").rotate({
-                angle: 0,
-                animateTo: 30 * num,
-                callback: callback
-            });
-        }
+        // var rotation = function (angle, callback){
+        //     $('.sector').rotate({
+        //         angle: 0,
+        //         animateTo: angle,
+        //         callback: callback
+        //     });
+        // }
         // 洗牌：接收一个参数arg，用于判断与当前选定角度的attr的差值，调整dom的排列
         function resetCaro() {
             var $sector = $('.sector');
             var sectorCt = document.getElementsByClassName('sector')[0],
                 sectorList = sectorCt.children,
                 sectorArr = Array.prototype.slice.call(sectorList),
-                temp = [];
-            // 旋转后修改dom数组
-            if(nowDirct === 'pre') {
-                temp = sectorArr.splice(0, nowNum);
-                temp.forEach(function (item) {
-                    sectorArr.push(item);
-                });
-            } else {
-                // 旋转后生成新的顺序
-                temp = sectorArr.splice(sectorArr.length-nowNum, nowNum);
-                temp.reverse();
-                temp.forEach(function(item) {
-                    sectorArr.unshift(item);
-                });
-            }
-            var propsArr = [];
+                temp = [],
+                propsArr = [],
+                num = finalAngle / 30;
+            // // 旋转后修改dom数组
+            // if(angle < 0) {
+            //     temp = sectorArr.splice(0, num);
+            //     temp.forEach(function (item) {
+            //         sectorArr.push(item);
+            //     });
+            // } else {
+            //     // 旋转后生成新的顺序
+            //     temp = sectorArr.splice(sectorArr.length - num, num);
+            //     temp.reverse();
+            //     temp.forEach(function(item) {
+            //         sectorArr.unshift(item);
+            //     });
+            // }
             for(var i = 0; i < sectorArr.length; i++) {
-                propsArr.push($(sectorArr[i]).attr('type'));
+                propsArr.push(+$(sectorArr[i]).attr('type'));
             }
-
+            // 求新排序的第一位
+            if(num > 0) {
+                // 顺时针
+                if(propsArr[0] === 1) {
+                    temp[0] = 8 - num;
+                } else {
+                    temp[0] = propsArr[0] - num;
+                }
+            } else {
+                // 逆时针
+                if(propsArr[0] === 7) {
+                    temp[0] = num;
+                } else {
+                    temp[0] = propsArr[0] + num;
+                }
+            }
+            // 求新排序整体
+            for(var i = 1; i < 9; i++) {
+                if(temp[i - 1] === 7) {
+                    temp[i] = 1;
+                } else {
+                    temp[i] = temp[i - 1] + 1;
+                }
+            }
+            console.log(temp);
             $('.sector_list').each(function (i, item) {
                 // 修改文字和颜色
-                $(this).html(propsArr[i] + '<div class="list-form"></div>');
+                $(this).html(temp[i] + '<div class="list-form"></div>');
                 // 移除原class
                 $(this).removeClass('sector_' + $(this).attr('type'));
                 // 修改新的type顺序
-                $(this).attr('type', propsArr[i]);
+                $(this).attr('type', temp[i]);
                 $(this).addClass('sector_' + $(this).attr('type'));
             });
-
             // 旋转后归零
-            // $sector.css('transform', 'rotate(0deg)');
-            rotation(0, null);
+            $sector.rotate(0);
+            angle = 0; // 重置，以防 touchEnd 事件触发
         }
 
 
@@ -211,26 +232,46 @@
                 if (e.type == 'touchstart') {
                     preX = touch.pageX;
 				    preY = touch.pageY;
-                    //计算当前点击的点与圆心(150,150)的X轴的夹角(弧度) --> 上半圆为负(0 ~ -180), 下半圆未正[0 ~ 180]
+                    //计算当前点击的点与圆心的X轴的夹角(弧度) --> 上半圆为负(0 ~ -180), 下半圆未正[0 ~ 180]
                     preAngle = Math.atan2(preY - circleY, preX - circleX);
-                
                 }
                 else if (e.type == 'touchmove') {
                     curX = touch.pageX;
                     curY = touch.pageY;
-                    //计算当前点击的点与圆心(150,150)的X轴的夹角(弧度) --> 上半圆为负(0 ~ -180), 下半圆未正[0 ~ 180]
-				    curAngle = Math.atan2(curY - circleY, curX - circleX);
+                    curAngle = Math.atan2(curY - circleY, curX - circleX);
+					transferAngle = curAngle - preAngle;
+                    angle += Math.round(transferAngle * 180 / Math.PI);
+					$(this).rotate(angle);
+					preX = curX;
+					preY = curY;
+                    preAngle = curAngle;
                 }
                 else if (e.type == 'touchend') {
-                    transferAngle = curAngle - preAngle;
-					a += (transferAngle * 180 / Math.PI);
-                    console.log(a);
-                    $(this).rotate(a);
-
-                    directionY = curY - preY;
-                    directionX = curX - preX;
-                    console.log(directionX,directionY);
-
+                    // 判断方向和角度差值，补全转交
+                    var _absAngle = Math.abs(angle);
+                    if(_absAngle > 30) {
+                        diffAngle = angle % 30;
+                    } else if(_absAngle > 15) {
+                        diffAngle = angle > 0 ? angle - 30 : angle + 30;
+                    } else {
+                        diffAngle = angle;
+                    }
+                    // console.log(diffAngle)
+                    if(Math.abs(diffAngle) < 15) {
+                        finalAngle = angle - diffAngle;
+                        $(this).rotate({
+                            angle: angle,
+                            animateTo: angle - diffAngle,
+                            callback: resetCaro // 转动完成后dom重排
+                        });
+                    } else {
+                        finalAngle = angle + (30 - diffAngle);
+                        $(this).rotate({
+                            angle: angle,
+                            animateTo: angle + (30 - diffAngle),
+                            callback: resetCaro
+                        });
+                    }
                     // // 向上滑动
                     // if (directionX < 140 && directionY < -30) {
 
@@ -257,23 +298,20 @@
         }
 
         // 逆时针
-        function playPre(num) {
-            var $sector = $('.sector');
-
-            nowDirct = 'pre';
-            nowNum = num;
-            rotation(-num, resetCaro);
-        }
+        // function playPre(num) {
+        //     var $sector = $('.sector');
+        //     nowDirct = 'pre';
+        //     nowNum = num;
+        //     rotation(-num, resetCaro);
+        // }
 
         // 顺时针
-        function playNext(num) {
-            var $sector = $('.sector');
-
-            nowDirct = 'next';
-            nowNum = num; 
-            rotation(num, resetCaro);
-
-        }
+        // function playNext(num) {
+        //     var $sector = $('.sector');
+        //     nowDirct = 'next';
+        //     nowNum = num; 
+        //     rotation(num, resetCaro);
+        // }
         
 
         $(function () {
