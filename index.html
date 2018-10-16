@@ -238,6 +238,7 @@
         */
         function caro() {
             $('.sector').on('touchstart touchmove touchend', function (e) {
+                e.preventDefault();
                 var touch = e.originalEvent.targetTouches[0];
                 if (e.type == 'touchstart') {
                     preX = touch.pageX;
