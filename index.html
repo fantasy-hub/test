@@ -19,8 +19,8 @@
             position: fixed;
             bottom: 0;
             left: 0;
-            margin-left: -62px;
-            margin-bottom: -61px; 
+            /* margin-left: -200px;
+            margin-bottom: -200px;  */
             /* bottom: 3.5em;
             left: 3.5em; */
             z-index: 0;
@@ -135,7 +135,7 @@
         </li>
     </ul>
     <script src="./jquery-3.3.1.js"></script>
-    <script src="./jquery.rotate.js"></script>
+    <script src="./jQuery.rotate.js"></script>
     <script>
         var $dom = $(document),
             x1, x2, y1, y2, isMove, directionX, directionY;
@@ -190,14 +190,14 @@
             // 求新排序的第一位
             if(num > 0) {
                 // 顺时针
-                if(propsArr[0] < 4) {
+                if((propsArr[0] === 1) || (propsArr[0] === 2 && num !== 1) || (propsArr[0] === 3 && num === 3)) {
                     temp[0] = 7 + propsArr[0] - num;
                 } else {
                     temp[0] = propsArr[0] - num;
                 }
             } else {
                 // 逆时针
-                if(propsArr[0] > 4) {
+                if((propsArr[0] === 7) || (propsArr[0] === 6 && num !== 1) || (propsArr[0] === 5 && num === 3)) {
                     temp[0] = num - (7 - propsArr[0]);
                 } else {
                     temp[0] = propsArr[0] - num;
@@ -211,7 +211,6 @@
                     temp[i] = temp[i - 1] + 1;
                 }
             }
-            console.log(temp);
             $('.sector_list').each(function (i, item) {
                 // 修改文字和颜色
                 $(this).html('<i>' + temp[i] + '</i>' + '<div class="list-form"></div>');
