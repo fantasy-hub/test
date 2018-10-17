@@ -1,0 +1,296 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <title>Document</title>
+    <link rel="stylesheet" type="text/css" href="./iconfont/iconfont.css">
+    <style>
+        ul, li {
+            list-style: none;
+        }
+        html,body,p,h1,h2,h3,ul,li {
+            margin: 0;
+            padding: 0;
+            font-size: 16px;
+        }
+
+        .circle {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            background: black;
+        }
+        .sector {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            margin-left: -41px;
+            margin-bottom: -43px;
+            z-index: 0;
+            /* width: 122px;
+            height: 122px; */
+            width: 100px;
+            height: 100px;
+            /* transition: all .3s; */
+        }
+        
+        .sector_list {
+            position: absolute;
+            bottom: 50%;
+            right: 50%;
+            /* width: 85px;
+            height: 95px; */
+            width: 100px;
+            height: 100px;
+            transform-origin: 100% 100%;
+            overflow: hidden;
+        }
+        .list-form {
+            position: absolute;
+            bottom: -50%;
+            right: -50%;
+            /* width: 100px;
+            height: 100px; */
+            width: 112px;
+            height: 109px;
+            border-radius: 50%;
+            text-decoration: none;
+            text-align: center;
+            transform: skew(-60deg) rotate(-60deg);
+        } 
+        /* .sector_list i {
+            position: absolute;
+            z-index: 1;
+            bottom: 2px;
+            left: 66px;
+        } */
+        .icon-tianshenpi {
+            padding: 11px 18px 3px 0;
+            display: inline-block;
+            font: normal normal normal 14px/1 FontAwesome;
+            font-size: inherit;
+            text-rendering: auto;
+            -webkit-font-smoothing: antialiased;
+        }
+        .icon-icon_wangye {
+            padding: 11px 18px 3px 0;
+            display: inline-block;
+            font: normal normal normal 14px/1 FontAwesome;
+            font-size: inherit;
+            text-rendering: auto;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        .pos_1 {
+            transform: rotate(0deg) skew(60deg);
+        }
+        .sector_1 .list-form {
+            background-color: red;
+        }
+        .pos_2 {
+            transform: rotate(30deg) skew(60deg);
+        }
+        .sector_2 .list-form {
+            background-color: orange;
+        }
+        .pos_3 {
+            transform: rotate(60deg) skew(60deg);
+        }
+        .sector_3 .list-form {
+            background-color: yellow;
+        }
+        .pos_4 {
+            transform: rotate(90deg) skew(60deg);
+        }
+        .sector_4 .list-form {
+            background-color: green;
+        }
+        .pos_5 {
+            transform: rotate(120deg) skew(60deg);
+        }
+        .sector_5 .list-form {
+            background-color: aqua;
+        }
+        .pos_6 {
+            transform: rotate(150deg) skew(60deg);
+        }
+        .sector_6 .list-form {
+            background-color: blue;
+        }
+        .pos_7 {
+            transform: rotate(180deg) skew(60deg);
+        }
+        .sector_7 .list-form {
+            background-color: blueviolet;
+        }
+        .pos_8 {
+            transform: rotate(210deg) skew(60deg);
+        }
+        .pos_9 {
+            transform: rotate(240deg) skew(60deg);
+        }
+    </style>
+</head> 
+<body>
+    <ul class="sector">
+        <li class="sector_5 pos_1 sector_list" type="5"><i>5</i>
+            <div class="list-form"></div>
+        </li>
+        <li class="sector_6 pos_2 sector_list" type="6"><i>6</i>
+            <div class="list-form"></div>
+        </li>
+        <li class="sector_7 pos_3 sector_list" type="7"><i>7</i>
+            <div class="list-form"></div>
+        </li>
+        <li class="sector_1 pos_4 sector_list" type="1">
+            <div class="list-form"><i class="iconfont icon-tianshenpi"></i></div>
+        </li>
+        <li class="sector_2 pos_5 sector_list" type="2">
+            <div class="list-form"><i class="iconfont icon-icon_wangye"></i></div>
+        </li>
+        <li class="sector_3 pos_6 sector_list" type="3"><i>3</i>
+            <div class="list-form"></div>
+        </li>
+        <li class="sector_4 pos_7 sector_list" type="4"><i>4</i>
+            <div class="list-form"></div>
+        </li>
+        <li class="sector_5 pos_8 sector_list" type="5"><i>5</i>
+            <div class="list-form"></div>
+        </li>
+        <li class="sector_6 pos_9 sector_list" type="6"><i>6</i>
+            <div class="list-form"></div>
+        </li>
+    </ul>
+    <div class="circle"></div>
+
+    <!-- <script src="./inobounce.min.js"></script> -->
+    <script src="./jquery-3.3.1.js"></script>
+    <script src="./jquery.rotate.js"></script>
+    <script>
+        var nowDirct = '',
+            nowNum = '',
+            circleY = document.documentElement.clientHeight, // 圆心Y
+            circleX = 0, // 圆心X
+            preX, // 起始点X
+            preY, // 起始点Y
+            curX, // 移动点X
+            curY, // 移动点Y
+            transferAngle, // 弧度差值
+            preAngle, // 初始弧度
+            curAngle, // 移动弧度
+            angle = 0, // 角度
+            diffAngle = 0, // 差异角
+            finalAngle = 0, // 旋转整角
+            isMove = false; // 禁止频繁操作
+
+        // 洗牌：接收一个参数arg，用于判断与当前选定角度的attr的差值，调整dom的排列
+        function resetCaro() {
+            var $sector = $('.sector');
+            var sectorCt = document.getElementsByClassName('sector')[0],
+                sectorList = sectorCt.children,
+                sectorArr = Array.prototype.slice.call(sectorList),
+                temp = [],
+                propsArr = [],
+                num = finalAngle / 30;
+
+            for(var i = 0; i < sectorArr.length; i++) {
+                propsArr.push(+$(sectorArr[i]).attr('type'));
+            }
+            // 求新排序的第一位
+            if(num > 0) {
+                // 顺时针
+                if((propsArr[0] === 1) || (propsArr[0] === 2 && num !== 1) || (propsArr[0] === 3 && num === 3)) {
+                    temp[0] = 7 + propsArr[0] - num;
+                } else {
+                    temp[0] = propsArr[0] - num;
+                }
+            } else {
+                // 逆时针
+                if((propsArr[0] === 7) || (propsArr[0] === 6 && Math.abs(num) !== 1) || (propsArr[0] === 5 && Math.abs(num) === 3)) {
+                    temp[0] = Math.abs(num) - (7 - propsArr[0]);
+                } else {
+                    temp[0] = propsArr[0] - num;
+                }
+            }
+            // 求新排序整体
+            for(var i = 1; i < 9; i++) {
+                if(temp[i - 1] === 7) {
+                    temp[i] = 1;
+                } else {
+                    temp[i] = temp[i - 1] + 1;
+                }
+            }
+            $('.sector_list').each(function (i, item) {
+                // 修改文字和颜色
+                $(this).html('<i>' + temp[i] + '</i>' + '<div class="list-form"></div>');
+                // 移除原class
+                $(this).removeClass('sector_' + $(this).attr('type'));
+                // 修改新的type顺序
+                $(this).attr('type', temp[i]);
+                $(this).addClass('sector_' + $(this).attr('type'));
+            });
+            // 旋转后归零
+            $sector.rotate(0);
+            angle = 0; // 重置，以防 touchEnd 事件触发
+
+            isMove = false;
+        }
+
+
+        /**
+         * @param 判断滑动方向；判断滑动距离；执行转一格或转两格
+        */
+        function caro() {
+            $('.sector').on('touchstart touchmove touchend', function (e) {
+                e.preventDefault();
+                var touch = e.originalEvent.targetTouches[0];
+                if (e.type == 'touchstart') {
+                    if (isMove) { return };
+                    preX = touch.pageX;
+				    preY = touch.pageY;
+                    //计算当前点击的点与圆心的X轴的夹角(弧度) --> 上半圆为负(0 ~ -180), 下半圆未正[0 ~ 180]
+                    preAngle = Math.atan2(preY - circleY, preX - circleX);
+                }
+                else if (e.type == 'touchmove') {
+                    isMove = true;
+                    curX = touch.pageX;
+                    curY = touch.pageY;
+                    curAngle = Math.atan2(curY - circleY, curX - circleX);
+                    transferAngle = curAngle - preAngle;
+                    angle += Math.round(transferAngle * 180 / Math.PI);
+                    // 不能超过90度
+                    if(angle > 90) {
+                        angle = 90;
+                    } else if(angle < -90) {
+                        angle = -90;
+                    }
+					$(this).rotate(angle);
+					preX = curX;
+					preY = curY;
+                    preAngle = curAngle;
+                }
+                else if (e.type == 'touchend') {
+                    diffAngle = angle % 30;
+                    finalAngle = angle > 0 ? angle + (30 - diffAngle) : angle + (-30 - diffAngle);
+                    $(this).rotate({
+                        angle: angle,
+                        animateTo: finalAngle,
+                        callback: resetCaro
+                    });
+                }
+            });
+        }
+
+        $(function () {
+            caro();
+        });
+    </script>
+</body>
+</html>
