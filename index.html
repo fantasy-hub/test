@@ -159,7 +159,8 @@
             curAngle, // 移动弧度
             angle = 0, // 角度
             diffAngle = 0, // 差异角
-            finalAngle = 0;  // 旋转整角
+            finalAngle = 0, // 旋转整角
+            isMove = false; // 禁止频繁操作
 
         // var rotation = function (angle, callback){
         //     $('.sector').rotate({
@@ -177,20 +178,7 @@
                 temp = [],
                 propsArr = [],
                 num = finalAngle / 30;
-            // // 旋转后修改dom数组
-            // if(angle < 0) {
-            //     temp = sectorArr.splice(0, num);
-            //     temp.forEach(function (item) {
-            //         sectorArr.push(item);
-            //     });
-            // } else {
-            //     // 旋转后生成新的顺序
-            //     temp = sectorArr.splice(sectorArr.length - num, num);
-            //     temp.reverse();
-            //     temp.forEach(function(item) {
-            //         sectorArr.unshift(item);
-            //     });
-            // }
+
             for(var i = 0; i < sectorArr.length; i++) {
                 propsArr.push(+$(sectorArr[i]).attr('type'));
             }
@@ -230,6 +218,8 @@
             // 旋转后归零
             $sector.rotate(0);
             angle = 0; // 重置，以防 touchEnd 事件触发
+
+            isMove = false;
         }
 
 
@@ -241,12 +231,14 @@
                 e.preventDefault();
                 var touch = e.originalEvent.targetTouches[0];
                 if (e.type == 'touchstart') {
+                    if (isMove) { return };
                     preX = touch.pageX;
 				    preY = touch.pageY;
                     //计算当前点击的点与圆心的X轴的夹角(弧度) --> 上半圆为负(0 ~ -180), 下半圆未正[0 ~ 180]
                     preAngle = Math.atan2(preY - circleY, preX - circleX);
                 }
                 else if (e.type == 'touchmove') {
+                    isMove = true;
                     curX = touch.pageX;
                     curY = touch.pageY;
                     curAngle = Math.atan2(curY - circleY, curX - circleX);
