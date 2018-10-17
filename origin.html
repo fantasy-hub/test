@@ -162,6 +162,13 @@
             finalAngle = 0, // 旋转整角
             isMove = false; // 禁止频繁操作
 
+        // var rotation = function (angle, callback){
+        //     $('.sector').rotate({
+        //         angle: 0,
+        //         animateTo: angle,
+        //         callback: callback
+        //     });
+        // }
         // 洗牌：接收一个参数arg，用于判断与当前选定角度的attr的差值，调整dom的排列
         function resetCaro() {
             var $sector = $('.sector');
@@ -249,13 +256,33 @@
                     preAngle = curAngle;
                 }
                 else if (e.type == 'touchend') {
-                    diffAngle = angle % 30;
-                    finalAngle = angle > 0 ? angle + (30 - diffAngle) : angle + (-30 - diffAngle);
-                    $(this).rotate({
-                        angle: angle,
-                        animateTo: finalAngle,
-                        callback: resetCaro
-                    });
+                    // 判断方向和角度差值，补全转交
+                    var _absAngle = Math.abs(angle);
+                    if(_absAngle > 30) {
+                        diffAngle = angle % 30;
+                    } else if(_absAngle > 15) {
+                        diffAngle = angle > 0 ? angle - 30 : angle + 30; // 补角计算（枚举）
+                    } else {
+                        diffAngle = angle;
+                    }
+                    // console.log(diffAngle)
+                    if(Math.abs(diffAngle) < 15) {
+                        finalAngle = angle - diffAngle;
+                        $(this).rotate({
+                            duration: 250,
+                            angle: angle,
+                            animateTo: angle - diffAngle,
+                            callback: resetCaro // 转动完成后dom重排
+                        });
+                    } else {
+                        // console.log(angle, diffAngle, angle > 0 ? angle + (30 - diffAngle) : angle + (-30 - diffAngle))
+                        finalAngle = angle > 0 ? angle + (30 - diffAngle) : angle + (-30 - diffAngle);
+                        $(this).rotate({
+                            angle: angle,
+                            animateTo: angle > 0 ? angle + (30 - diffAngle) : angle + (-30 - diffAngle),
+                            callback: resetCaro
+                        });
+                    }
                 }
             });
         }
