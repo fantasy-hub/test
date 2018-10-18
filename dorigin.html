@@ -121,11 +121,14 @@
         .sector_8 .list-form {
             background-color: salmon;
         }
+
+        .list-form:active {
+            background-color: white;
+        }
     </style>
 </head> 
 <body>
     <ul class="sector">
-
         <li class="sector_7 pos_7 sector_list" type="7">
             <div class="list-form"><i class="iconfont icon-tianshenpi"></i></div>
         </li>
@@ -153,99 +156,103 @@
     </ul>
     <div class="circle"></div>
 
-
+    <!-- <script src="./inobounce.min.js"></script> -->
     <script src="./jquery-3.3.1.js"></script>
     <script src="./jquery.rotate.js"></script>
     <script>
-        (function ($) {
-            $.fn.sector = function () {
-                var nowDirct = '',
-                nowNum = '',
-                $sector = $(this),
-                circleY = $sector.offset().top + ($sector.height() / 2), // 圆心Y
-                circleX = $sector.offset().left + ($sector.width() / 2), // 圆心X
-                preX, // 起始点X
-                preY, // 起始点Y
-                curX, // 移动点X
-                curY, // 移动点Y
-                transferAngle, // 弧度差值
-                preAngle, // 初始弧度
-                curAngle, // 移动弧度
-                angle = 0, // 角度
-                transal, // 上一次保存的angle角度
-                startAngle = 0, // touchStart的初始角度
-                oldAngle = 0, // 之前的角度
-                diffAngle = 0, // 差异角
-                finalAngle = 0; // 旋转整角
-                isMove = false; // 禁止频繁操作
-
-                $sector.on('touchstart touchmove touchend', function (e) {
-                    e.preventDefault();
-                    var touch = e.originalEvent.targetTouches[0];
-                    if (e.type == 'touchstart') {
-                        // if (isMove) { return };
-                        // isMove = true;
-                        preX = touch.pageX;
-                        preY = touch.pageY;
-                        //计算当前点击的点与圆心的X轴的夹角(弧度) --> 上半圆为负(0 ~ -180), 下半圆未正[0 ~ 180]
-                        preAngle = Math.atan2(preY - circleY, preX - circleX);
-                        startAngle = angle;
+        var nowDirct = '',
+            nowNum = '',
+            // circleY = document.documentElement.clientHeight, // 圆心Y
+            $sector = $('.sector'),
+            circleY = $sector.offset().top + ($sector.height() / 2), // 圆心Y
+            circleX = $sector.offset().left + ($sector.width() / 2), // 圆心X
+            preX, // 起始点X
+            preY, // 起始点Y
+            curX, // 移动点X
+            curY, // 移动点Y
+            transferAngle, // 弧度差值
+            preAngle, // 初始弧度
+            curAngle, // 移动弧度
+            transal = 0,
+            angle = 0, // 角度
+            startAngle = 0, // touchStart的初始角度
+            oldAngle = 0, // 之前的角度
+            diffAngle = 0, // 差异角
+            finalAngle = 0; // 旋转整角
+            isMove = false; // 禁止频繁操作
+        // console.log(circleY, circleX);
+        /**
+         * @param 判断滑动方向；判断滑动距离；执行转一格或转两格
+        */
+        function caro() {
+            $('.sector').on('touchstart touchmove touchend', function (e) {
+                e.preventDefault();
+                var touch = e.originalEvent.targetTouches[0];
+                if (e.type == 'touchstart') {
+                    // if (isMove) { return };
+                    // isMove = true;
+                    preX = touch.pageX;
+				    preY = touch.pageY;
+                    //计算当前点击的点与圆心的X轴的夹角(弧度) --> 上半圆为负(0 ~ -180), 下半圆未正[0 ~ 180]
+                    preAngle = Math.atan2(preY - circleY, preX - circleX);
+                    startAngle = angle;
+                }
+                else if (e.type == 'touchmove') {
+                    isMove = true;
+                    curX = touch.pageX;
+                    curY = touch.pageY;
+                    curAngle = Math.atan2(curY - circleY, curX - circleX);
+                    transferAngle = curAngle - preAngle;
+                    transal = Math.round(transferAngle * 180 / Math.PI);
+                    oldAngle = angle;
+                    // angle是累加值，将本次的angle与上次保存的oldAngle做对比，判断旋转的位置
+                    // console.log(transal);
+                    if(transal === 0) {
+                        return;
                     }
-                    else if (e.type == 'touchmove') {
-                        isMove = true;
-                        curX = touch.pageX;
-                        curY = touch.pageY;
-                        curAngle = Math.atan2(curY - circleY, curX - circleX);
-                        transferAngle = curAngle - preAngle;
-                        // console.log(transferAngle);
-                        transal = Math.round(transferAngle * 180 / Math.PI);
-                        oldAngle = angle;
-                        // angle是累加值，将本次的angle与上次保存的oldAngle做对比，判断旋转的位置
-                        // 手指点击不move得情况
-                        if(Math.abs(transal) === 0) {
-                            return;
+                    angle += transal;
+                    // 不能超过135度，最多转3格
+                    if(Math.abs(angle - startAngle) > 135) {
+                        angle = angle > 0 ? 135 : -135;
+                    }
+					// $(this).rotate(angle);
+					$(this).rotate({
+                        angle: oldAngle,
+                        animateTo: angle
+                    });
+					preX = curX;
+					preY = curY;
+                    preAngle = curAngle;
+                }
+                else if (e.type == 'touchend') {
+                    if(isMove) {
+                        isMove = false;
+                        diffAngle = angle % 45;
+                        // console.log(diffAngle);
+                        if((transal > 0 && angle < 0) || (transal < 0 && angle > 0)) {
+                            // 符号相反时，反向补角
+                            finalAngle = angle - diffAngle;
+                        } else {
+                            finalAngle = angle > 0 ? angle + (45 - diffAngle) : angle + (-45 - diffAngle);
                         }
-                        angle += transal;
-                        // 不能超过135度，最多转3格
-                        if(Math.abs(angle - startAngle) > 135) {
-                            angle = angle > 0 ? 135 : -135;
-                        }
-
                         $(this).rotate({
-                            duration: 500,
-                            angle: oldAngle,
-                            animateTo: angle
-                        });
-                        preX = curX;
-                        preY = curY;
-                        preAngle = curAngle;
-                    }
-                    else if (e.type == 'touchend') {
-                        if(isMove) {
-                            isMove = false;
-                            diffAngle = angle % 45;
-                            // finalAngle = angle > 0 ? angle + (45 - diffAngle) : angle + (-45 - diffAngle);
-                            if((transal > 0 && angle < 0) || (transal < 0 && angle > 0)) {
-                                // 符号相反时，反向补角
-                                finalAngle = angle - diffAngle;
-                            } else {
-                                finalAngle = angle > 0 ? angle + (45 - diffAngle) : angle + (-45 - diffAngle);
+                            duration: 250,
+                            angle: angle,
+                            animateTo: finalAngle,
+                            callback: function() {
+                                angle = finalAngle;
                             }
-                            $(this).rotate({
-                                duration: 500,
-                                angle: angle,
-                                animateTo: finalAngle,
-                                callback: function() {
-                                    angle = finalAngle;
-                                }
-                            });
-                        }
+                        });
                     }
-                });
-            };
-        })(jQuery);
+                }
+            });
+        }
 
-        $('.sector').sector();
+        $(function () {
+            caro();
+        });
+
+        // $(function)
     </script>
 </body>
 </html>
